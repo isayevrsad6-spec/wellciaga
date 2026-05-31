@@ -1,0 +1,505 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelMind — AI Image Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f0f1a;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1e1e3a;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .plan-badge {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+        }
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+        .hero p {
+            color: #888;
+            font-size: 18px;
+            max-width: 500px;
+            margin: 0 auto 10px;
+        }
+        .free-badge {
+            display: inline-block;
+            background: #1e1e3a;
+            border: 1px solid #6366f1;
+            color: #a855f7;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        /* GENERATOR */
+        .generator {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 20px 60px;
+        }
+        .input-box {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: border 0.3s;
+        }
+        .input-box:focus-within { border-color: #6366f1; }
+        .input-box label {
+            display: block;
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            resize: none;
+            height: 100px;
+        }
+        textarea::placeholder { color: #444; }
+
+        /* STYLE SEÇİMİ */
+        .styles {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .style-btn {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            color: #888;
+            padding: 8px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .style-btn:hover, .style-btn.active {
+            border-color: #6366f1;
+            color: #a855f7;
+            background: #1e1e3a;
+        }
+
+        /* GENERATE DÜYMƏSI */
+        .generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+        }
+        .generate-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* NƏTİCƏ */
+        .result-box {
+            display: none;
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .result-box img {
+            width: 100%;
+            display: block;
+        }
+        .result-actions {
+            padding: 15px 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .download-btn {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .share-btn {
+            padding: 12px 20px;
+            background: #2a2a4a;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        /* LOADING */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: #1a1a2e;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #2a2a4a;
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading p { color: #888; }
+
+        /* USAGE */
+        .usage-bar {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .usage-text { color: #888; font-size: 14px; }
+        .usage-count { color: #a855f7; font-weight: 600; }
+
+        /* PRICING */
+        .pricing {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .pricing h2 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .plan {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 16px;
+            padding: 30px 20px;
+            transition: all 0.3s;
+        }
+        .plan.popular {
+            border-color: #6366f1;
+            position: relative;
+        }
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .plan h3 { font-size: 18px; margin-bottom: 10px; }
+        .plan .price {
+            font-size: 36px;
+            font-weight: 700;
+            color: #a855f7;
+            margin-bottom: 5px;
+        }
+        .plan .price span { font-size: 16px; color: #888; }
+        .plan ul { list-style: none; margin: 20px 0; text-align: left; }
+        .plan ul li { color: #888; font-size: 14px; padding: 6px 0; }
+        .plan ul li::before { content: "✓ "; color: #6366f1; }
+        .plan-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #444;
+            font-size: 13px;
+            border-top: 1px solid #1e1e3a;
+            margin-top: 40px;
+        }
+        footer span { color: #6366f1; }
+
+        /* ERROR */
+        .error-box {
+            display: none;
+            background: #2a1a1a;
+            border: 1px solid #ef4444;
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: #ef4444;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">⚡ PixelMind</div>
+    <div class="plan-badge">Free Plan</div>
+</header>
+
+<div class="hero">
+    <h1>Text to Image AI</h1>
+    <p>Turn your imagination into stunning visuals in seconds</p>
+    <div class="free-badge">✨ 5 free images per day</div>
+</div>
+
+<div class="generator">
+
+    <div class="usage-bar">
+        <span class="usage-text">Daily usage</span>
+        <span class="usage-count"><span id="used">0</span> / 5 images used</span>
+    </div>
+
+    <div class="input-box">
+        <label>Describe your image</label>
+        <textarea id="prompt" placeholder="A futuristic city at sunset, cyberpunk style, neon lights, ultra detailed..."></textarea>
+    </div>
+
+    <div class="styles">
+        <button class="style-btn active" onclick="selectStyle(this, '')">🎨 Default</button>
+        <button class="style-btn" onclick="selectStyle(this, ', photorealistic, 8k')">📷 Photorealistic</button>
+        <button class="style-btn" onclick="selectStyle(this, ', anime style, vibrant')">🌸 Anime</button>
+        <button class="style-btn" onclick="selectStyle(this, ', oil painting, artistic')">🖼️ Oil Paint</button>
+        <button class="style-btn" onclick="selectStyle(this, ', cyberpunk, neon, futuristic')">🌆 Cyberpunk</button>
+        <button class="style-btn" onclick="selectStyle(this, ', watercolor, soft colors')">💧 Watercolor</button>
+    </div>
+
+    <button class="generate-btn" id="genBtn" onclick="generateImage()">
+        ✨ Generate Image
+    </button>
+
+    <div class="error-box" id="errorBox"></div>
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Creating your masterpiece... ✨</p>
+    </div>
+
+    <div class="result-box" id="resultBox">
+        <img id="resultImg" src="" alt="Generated Image">
+        <div class="result-actions">
+            <button class="download-btn" onclick="downloadImage()">⬇️ Download Image</button>
+            <button class="share-btn" onclick="generateImage()">🔄 Regenerate</button>
+        </div>
+    </div>
+
+</div>
+
+<div class="pricing">
+    <h2>Choose Your Plan</h2>
+    <div class="plans">
+        <div class="plan">
+            <h3>Free</h3>
+            <div class="price">$0 <span>/forever</span></div>
+            <ul>
+                <li>5 images per day</li>
+                <li>Standard quality</li>
+                <li>Basic styles</li>
+                <li>Download images</li>
+            </ul>
+            <button class="plan-btn" style="background:#2a2a4a">Current Plan</button>
+        </div>
+        <div class="plan popular">
+            <div class="popular-badge">⭐ Most Popular</div>
+            <h3>Starter</h3>
+            <div class="price">$9 <span>/month</span></div>
+            <ul>
+                <li>100 images per month</li>
+                <li>HD quality</li>
+                <li>All styles</li>
+                <li>Priority generation</li>
+            </ul>
+            <button class="plan-btn" onclick="alert('Coming soon! Payment system in development.')">Get Started</button>
+        </div>
+        <div class="plan">
+            <h3>Pro</h3>
+            <div class="price">$19 <span>/month</span></div>
+            <ul>
+                <li>Unlimited images</li>
+                <li>4K quality</li>
+                <li>All styles + custom</li>
+                <li>API access</li>
+            </ul>
+            <button class="plan-btn" onclick="alert('Coming soon! Payment system in development.')">Get Pro</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    &copy; 2026 <span>PixelMind</span> — AI-Powered Image Generation
+</footer>
+
+<script>
+    // ⚠️ BURAYA ÖZ TOKENINI YAZ
+    const HF_TOKEN = "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";
+    
+    let styleModifier = '';
+    let usedToday = parseInt(localStorage.getItem('pm_used') || '0');
+    let lastDate = localStorage.getItem('pm_date') || '';
+    const today = new Date().toDateString();
+    
+    if (lastDate !== today) {
+        usedToday = 0;
+        localStorage.setItem('pm_used', '0');
+        localStorage.setItem('pm_date', today);
+    }
+    
+    document.getElementById('used').textContent = usedToday;
+
+    function selectStyle(btn, modifier) {
+        document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        styleModifier = modifier;
+    }
+
+    async function generateImage() {
+        if (usedToday >= 5) {
+            showError('Daily limit reached! Upgrade to Pro for unlimited images. 🚀');
+            return;
+        }
+
+        const prompt = document.getElementById('prompt').value.trim();
+        if (!prompt) {
+            showError('Please describe the image you want to create!');
+            return;
+        }
+
+        const fullPrompt = prompt + styleModifier;
+        
+        document.getElementById('genBtn').disabled = true;
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('resultBox').style.display = 'none';
+        document.getElementById('errorBox').style.display = 'none';
+
+        try {
+            const response = await fetch(
+                "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${HF_TOKEN}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ inputs: fullPrompt })
+                }
+            );
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error || 'Generation failed');
+            }
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            
+            document.getElementById('resultImg').src = url;
+            document.getElementById('resultBox').style.display = 'block';
+            
+            usedToday++;
+            localStorage.setItem('pm_used', usedToday);
+            localStorage.setItem('pm_date', today);
+            document.getElementById('used').textContent = usedToday;
+
+        } catch (error) {
+            showError('Error: ' + error.message + '. Please try again.');
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('genBtn').disabled = false;
+        }
+    }
+
+    function showError(msg) {
+        const box = document.getElementById('errorBox');
+        box.textContent = msg;
+        box.style.display = 'block';
+    }
+
+    function downloadImage() {
+        const img = document.getElementById('resultImg');
+        const a = document.createElement('a');
+        a.href = img.src;
+        a.download = 'pixelmind-' + Date.now() + '.png';
+        a.click();
+    }
+</script>
+
+</body>
+</html>
