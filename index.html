@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WELLCIAGA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Raleway', sans-serif; background: #0a0a0a; color: #f0f0f0; }
+
+        /* HEADER */
+        header {
+            background: #0a0a0a;
+            border-bottom: 1px solid #c9a84c;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #c9a84c;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+        }
+        .logo span { color: #ffffff; }
+        .cart-btn {
+            background: transparent;
+            color: #c9a84c;
+            border: 1px solid #c9a84c;
+            padding: 10px 25px;
+            cursor: pointer;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'Raleway', sans-serif;
+            transition: all 0.3s;
+        }
+        .cart-btn:hover { background: #c9a84c; color: #0a0a0a; }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            border-bottom: 1px solid #1a1a1a;
+            background: linear-gradient(180deg, #0a0a0a 0%, #111 100%);
+        }
+        .hero h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: #c9a84c;
+            letter-spacing: 8px;
+            margin-bottom: 15px;
+        }
+        .hero p {
+            color: #888;
+            letter-spacing: 3px;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        .divider {
+            width: 60px;
+            height: 1px;
+            background: #c9a84c;
+            margin: 20px auto;
+        }
+
+        /* MƏHSULLAR */
+        .section-title {
+            text-align: center;
+            padding: 50px 20px 30px;
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            letter-spacing: 5px;
+            color: #c9a84c;
+            text-transform: uppercase;
+        }
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2px;
+            padding: 2px 40px 60px;
+        }
+        .product-card {
+            background: #111;
+            text-align: center;
+            padding: 30px 20px;
+            transition: all 0.3s;
+            border: 1px solid #1a1a1a;
+        }
+        .product-card:hover { border-color: #c9a84c; background: #141414; }
+        .product-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background: #1a1a1a;
+            display: block;
+            margin-bottom: 20px;
+        }
+        .product-card h3 {
+            font-family: 'Raleway', sans-serif;
+            font-size: 13px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        .product-card .price {
+            color: #c9a84c;
+            font-size: 18px;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 20px;
+        }
+        .add-btn {
+            background: transparent;
+            color: #c9a84c;
+            border: 1px solid #c9a84c;
+            padding: 12px 30px;
+            cursor: pointer;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'Raleway', sans-serif;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        .add-btn:hover { background: #c9a84c; color: #0a0a0a; }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid #c9a84c;
+            text-align: center;
+            padding: 30px;
+            color: #444;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        footer span { color: #c9a84c; }
+
+        /* SƏBƏT */
+        .cart-overlay {
+            display: none;
+            position: fixed;
+            top: 0; right: 0;
+            width: 380px;
+            height: 100%;
+            background: #0d0d0d;
+            border-left: 1px solid #c9a84c;
+            padding: 30px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .cart-overlay h2 {
+            font-family: 'Playfair Display', serif;
+            color: #c9a84c;
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #1a1a1a;
+            font-size: 13px;
+            letter-spacing: 1px;
+            color: #ccc;
+        }
+        .total {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: #c9a84c;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #c9a84c;
+        }
+        .order-btn {
+            background: #c9a84c;
+            color: #0a0a0a;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 20px;
+            font-family: 'Raleway', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .order-btn:hover { background: #e0b85a; }
+        .close-btn {
+            float: right;
+            cursor: pointer;
+            font-size: 20px;
+            color: #c9a84c;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">WELL<span>CIAGA</span></div>
+    <button class="cart-btn" onclick="toggleCart()">🛒 Səbət (<span id="count">0</span>)</button>
+</header>
+
+<div class="hero">
+    <h2>WELLCIAGA</h2>
+    <div class="divider"></div>
+    <p>Lüks. Stil. Keyfiyyət.</p>
+</div>
+
+<div class="section-title">Kolleksiya</div>
+
+<div class="products" id="products"></div>
+
+<footer>
+    &copy; 2026 <span>WELLCIAGA</span> — Bütün hüquqlar qorunur
+</footer>
+
+<!-- SƏBƏT -->
+<div class="cart-overlay" id="cart">
+    <span class="close-btn" onclick="toggleCart()">✕</span>
+    <h2>SƏBƏTİM</h2>
+    <div id="cart-items"></div>
+    <div class="total">Cəmi: <span id="total">0</span> ₼</div>
+    <button class="order-btn" onclick="order()">Sifariş Ver</button>
+</div>
+
+<script>
+    const products = [
+        { id: 1, name: "Məhsul 1", price: 25, img: "https://via.placeholder.com/300x220/1a1a1a/c9a84c?text=WELLCIAGA" },
+        { id: 2, name: "Məhsul 2", price: 40, img: "https://via.placeholder.com/300x220/1a1a1a/c9a84c?text=WELLCIAGA" },
+        { id: 3, name: "Məhsul 3", price: 15, img: "https://via.placeholder.com/300x220/1a1a1a/c9a84c?text=WELLCIAGA" },
+        { id: 4, name: "Məhsul 4", price: 60, img: "https://via.placeholder.com/300x220/1a1a1a/c9a84c?text=WELLCIAGA" },
+    ];
+
+    let cart = [];
+
+    function showProducts() {
+        const container = document.getElementById('products');
+        container.innerHTML = products.map(p => `
+            <div class="product-card">
+                <img class="product-img" src="${p.img}" alt="${p.name}">
+                <h3>${p.name}</h3>
+                <div class="price">${p.price} ₼</div>
+                <button class="add-btn" onclick="addToCart(${p.id})">Səbətə əlavə et</button>
+            </div>
+        `).join('');
+    }
+
+    function addToCart(id) {
+        const product = products.find(p => p.id === id);
+        const existing = cart.find(c => c.id === id);
+        if (existing) { existing.qty++; } 
+        else { cart.push({ ...product, qty: 1 }); }
+        updateCart();
+    }
+
+    function updateCart() {
+        document.getElementById('count').textContent = cart.reduce((a, c) => a + c.qty, 0);
+        document.getElementById('cart-items').innerHTML = cart.map(c => `
+            <div class="cart-item">
+                <span>${c.name} x${c.qty}</span>
+                <span>${c.price * c.qty} ₼</span>
+            </div>
+        `).join('');
+        document.getElementById('total').textContent = cart.reduce((a, c) => a + c.price * c.qty, 0);
+    }
+
+    function toggleCart() {
+        const c = document.getElementById('cart');
+        c.style.display = c.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function order() {
+        if (cart.length === 0) { alert('Səbət boşdur!'); return; }
+        alert('✅ Sifarişiniz qəbul edildi! Tezliklə əlaqə saxlayacağıq.');
+        cart = [];
+        updateCart();
+        toggleCart();
+    }
+
+    showProducts();
+</script>
+
+</body>
+</html>
